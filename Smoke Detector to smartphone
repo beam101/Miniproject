@@ -1,0 +1,52 @@
+#include <TridentTD_LineNotify.h>  //thank you Mr.TridentTD https://github.com/TridentTD/TridentTD_LineNotify
+#include <ESP8266WiFi.h>
+
+#define ssid "MOM"  //you wifi router
+#define pass "nipa12345"  //password of wifi
+
+#define LINE_TOKEN "qjdXUvRYvQn1yh9Qgzn3J2ff8OkHx6AdpDmOfOsdA0y"  //line token at https://notify-bot.line.me/en/
+TridentTD_LineNotify myLINE(LINE_TOKEN);
+
+int sensorValue;
+int isSmokepin = 14;
+
+int isSmoke = HIGH;
+
+bool smoke1 = 0;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(isSmokepin, INPUT);
+  
+  WiFi.begin(ssid, pass);
+  
+}
+
+
+void loop() {
+  smokeRead();
+  Serial.println(smoke1);
+
+
+  if (smoke1) {
+    myLINE.notify("Fire! Fire! Fire!");  //  Messenger to line notification
+    Serial.println("Warnig, Warning, Warning");
+    delay(5000);
+  }
+
+  delay(2000);
+}
+
+/////////////////////////////////////////////////
+
+void smokeRead() {
+  sensorValue = analogRead(A0);
+  Serial.println(sensorValue);
+  if (sensorValue > 880) {
+    smoke1 = 1;
+    Serial.println("SMOKE, SMOKE, SMOKE");
+  } else {
+    smoke1 = 0;
+    Serial.println("NO SMOKE");
+  }
+}
